@@ -29,6 +29,7 @@ public class NettyServer {
                         ch.pipeline().addLast(new SimpleChannelInboundHandler<String>() {
                             @Override
                             protected void channelRead0(ChannelHandlerContext ctx, String msg) {
+
                                 System.out.println(msg);
                             }
                         });
