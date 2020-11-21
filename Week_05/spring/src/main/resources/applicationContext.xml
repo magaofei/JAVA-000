@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="student"
+          class="com.magaofei.Student">
+        <property name="id" value="123"/>
+        <property name="name" value="mark"/>
+    </bean>
+
+    <bean id="studentFactory"
+          class="com.magaofei.StudentFactory"/>
+    <bean id="student1" factory-bean="studentFactory" factory-method="getStudent">
+        <constructor-arg value=""/>
+    </bean>
+</beans>
