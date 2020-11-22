@@ -10,8 +10,8 @@
     </bean>
 
     <bean id="studentFactory"
-          class="com.magaofei.StudentFactory"></bean>
+          class="com.magaofei.StudentFactory"/>
     <bean id="student1" factory-bean="studentFactory" factory-method="getStudent">
-
+        <constructor-arg value=""/>
     </bean>
 </beans>
