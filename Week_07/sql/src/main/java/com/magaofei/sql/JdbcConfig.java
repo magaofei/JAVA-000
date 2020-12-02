@@ -2,10 +2,7 @@ package com.magaofei.sql;
 
 import com.mysql.cj.jdbc.MysqlDataSource;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -64,12 +61,12 @@ public class JdbcConfig implements TransactionManagementConfigurer {
     // 定义动态数据源
     @Primary
     @Bean
-    public DataSource dataSource() {
+    public DataSource dataSource(DataSource masterDataSource, DataSource slaveDataSource) {
         DynamicDataSource dataSource = new DynamicDataSource();
         // 初始化值必须设置进去  且给一个默认值
         Map<Object, Object> map = new HashMap<>();
-        map.put(DynamicDataSourceId.MASTER, masterDataSource());
-        map.put(DynamicDataSourceId.SLAVE1, slaveDataSource());
+        map.put(DynamicDataSourceId.MASTER, masterDataSource);
+        map.put(DynamicDataSourceId.SLAVE1, slaveDataSource);
 
         //顺手注册上去，方便后续的判断
         DynamicDataSourceId.DATA_SOURCE_IDS.add(DynamicDataSourceId.MASTER);
@@ -82,13 +79,13 @@ public class JdbcConfig implements TransactionManagementConfigurer {
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate() {
-        return new JdbcTemplate(dataSource());
+    public JdbcTemplate jdbcTemplate(DataSource masterDataSource, DataSource slaveDataSource) {
+        return new JdbcTemplate(dataSource(masterDataSource, slaveDataSource));
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() {
-        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager(dataSource());
+    public PlatformTransactionManager transactionManager(DataSource masterDataSource, DataSource slaveDataSource) {
+        DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager(dataSource(masterDataSource, slaveDataSource));
         dataSourceTransactionManager.setEnforceReadOnly(true); // 让事务管理器进行只读事务层面上的优化  建议开启
         return dataSourceTransactionManager;
     }
@@ -96,6 +93,6 @@ public class JdbcConfig implements TransactionManagementConfigurer {
     // 指定注解使用的事务管理器
     @Override
     public PlatformTransactionManager annotationDrivenTransactionManager() {
-        return transactionManager();
+        return transactionManager(masterDataSource(), slaveDataSource());
     }
 }
