@@ -13,6 +13,7 @@ import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.data.Stat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.net.InetAddress;
 import java.net.InterfaceAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 @SpringBootApplication
 @RestController
@@ -65,15 +67,16 @@ public class RpcfxServerApplication {
 			ex.printStackTrace();
 		}
 
-		client.create().withMode(CreateMode.EPHEMERAL).
+		client.create().withMode(CreateMode.PERSISTENT).
 				forPath( "/" + service + "/" + userServiceSesc.getHost() + "_" + userServiceSesc.getPort(), "provider".getBytes());
+
 	}
 
 	@Autowired
 	RpcfxInvoker invoker;
 
 	@PostMapping("/")
-	public RpcfxResponse invoke(@RequestBody RpcfxRequest request) {
+	public RpcfxResponse invoke(@RequestBody RpcfxRequest request) throws ClassNotFoundException {
 		return invoker.invoke(request);
 	}
 

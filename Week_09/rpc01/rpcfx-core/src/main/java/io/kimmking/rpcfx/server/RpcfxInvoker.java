@@ -5,6 +5,8 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import io.kimmking.rpcfx.api.RpcfxRequest;
 import io.kimmking.rpcfx.api.RpcfxResolver;
 import io.kimmking.rpcfx.api.RpcfxResponse;
+import jdk.internal.org.objectweb.asm.Type;
+import org.springframework.cglib.core.ReflectUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -18,12 +20,15 @@ public class RpcfxInvoker {
         this.resolver = resolver;
     }
 
-    public RpcfxResponse invoke(RpcfxRequest request) {
+    public RpcfxResponse invoke(RpcfxRequest request) throws ClassNotFoundException {
         RpcfxResponse response = new RpcfxResponse();
         String serviceClass = request.getServiceClass();
 
+        Class<?> serverClass = Class.forName(request.getServiceClass());
+
+//        ReflectUtils.defineClass(request.getServiceClass(), null, Thread.currentThread().getContextClassLoader());
         // 作业1：改成泛型和反射
-        Object service = resolver.resolve(serviceClass, Object.class);//this.applicationContext.getBean(serviceClass);
+        Object service = resolver.resolve(serviceClass, serverClass);//this.applicationContext.getBean(serviceClass);
 
         try {
             Method method = resolveMethodFromClass(service.getClass(), request.getMethod());

@@ -7,6 +7,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public Order findOrderById(int id) {
+        System.out.println("findOrderById = " + id);
         return new Order(id, "Cuijing" + System.currentTimeMillis(), 9.9f);
     }
 }

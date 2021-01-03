@@ -7,6 +7,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(int id) {
+        System.out.println("UserServiceImpl findById = " + id);
         return new User(id, "KK" + System.currentTimeMillis());
     }
 }
